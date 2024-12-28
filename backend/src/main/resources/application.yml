@@ -1,0 +1,120 @@
+# src/main/resources/application.yml
+spring:
+  application:
+    name: newsagg-system
+
+  security:
+    user:
+      name: admin
+      password: admin
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/newsagg
+    username: newsagg
+    password: newsagg
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+
+  # RabbitMQ Configuration
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: newsagg
+    password: newsagg
+    virtual-host: /newsagg
+    listener:
+      simple:
+        retry:
+          enabled: true
+          initial-interval: 3s
+          max-attempts: 3
+
+  # AI Configuration
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        model: llama3.2
+
+# RSS Feed Configuration
+outlets:
+  vg:
+    name: VG
+    feed-url: https://www.vg.no/rss/feed
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  nrk:
+    name: NRK
+    feed-urls:
+      - https://www.nrk.no/toppsaker.rss
+      # - https://www.nrk.no/nyheter/siste.rss
+      - https://www.nrk.no/norge/toppsaker.rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  db:
+    name: Dagbladet
+    feed-url: https://www.dagbladet.no/?lab_viewport=rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  ap:
+    name: Aftenposten
+    feed-url: https://www.aftenposten.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  tv2:
+    name: TV2
+    feed-url: https://www.tv2.no/rss/nyheter
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  na:
+    name: Nettavisen
+    feed-url: https://www.nettavisen.no/service/rich-rss?tag=nyheter
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bt:
+    name: Bergens Tidende
+    feed-url: https://www.bt.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  ab:
+    name: Aftenbladet
+    feed-url: https://www.aftenbladet.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  aa:
+    name: Adresseavisen
+    feed-url: https://www.adressa.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+
+# Application specific settings
+app:
+  processing:
+    batch-size: 10
+    retry-attempts: 3
+    timeout: 30s
+  retry-interval: 300000 # 5 minutes
+
+logging:
+  level:
+    no.newsagg: DEBUG
+    org.springframework: INFO

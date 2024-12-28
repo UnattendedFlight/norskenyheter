@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: newsagg-postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: H3uphef2
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: newsagg-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: newsagg
+      RABBITMQ_DEFAULT_PASS: newsagg
+      RABBITMQ_DEFAULT_VHOST: /newsagg
+    ports:
+      - "5672:5672"   # AMQP protocol port
+      - "15672:15672" # Management interface port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: >
+      bash -c "rabbitmq-plugins enable rabbitmq_delayed_message_exchange; rabbitmq-server"
+
+  # Initialization service for PostgreSQL
+  postgres-init:
+    image: postgres:16
+    container_name: newsagg-postgres-init
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      bash -c "
+        echo 'Creating newsagg database and user...' &&
+        PGPASSWORD=H3uphef2 psql -h postgres -U postgres -d postgres -c 'CREATE DATABASE newsagg;' &&
+        PGPASSWORD=H3uphef2 psql -h postgres -U postgres -d postgres -c \"CREATE USER newsagg WITH PASSWORD 'newsagg';\" &&
+        PGPASSWORD=H3uphef2 psql -h postgres -U postgres -d postgres -c 'GRANT ALL PRIVILEGES ON DATABASE newsagg TO newsagg;' &&
+        PGPASSWORD=H3uphef2 psql -h postgres -U postgres -d newsagg -c 'GRANT ALL ON SCHEMA public TO newsagg;'
+      "
+
+volumes:
+  postgres_data:
+    name: newsagg_postgres_data
+  rabbitmq_data:
+    name: newsagg_rabbitmq_data
