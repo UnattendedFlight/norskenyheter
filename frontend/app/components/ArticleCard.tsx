@@ -5,16 +5,17 @@ import Link from "next/link";
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card";
 import {cn} from "@/lib/utils";
 import Image from "next/image";
-import {ImageOff, RefreshCw, ShieldAlert} from "lucide-react";
+import {ImageOff, Maximize2, RefreshCw, ShieldAlert} from "lucide-react";
 import HoverOver from "@/app/components/HoverOver";
 import {Badge} from "@/components/ui/badge";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import moment from "moment";
 import {Button} from "@/components/ui/button";
 
-export function ArticleCard({article, setNewArticleData}: {
+export function ArticleCard({article, setNewArticleData, onSelectArticle}: {
     article: Article,
     setNewArticleData: (data: Article) => void
+    onSelectArticle?: (article: Article) => void
 }) {
     const [open, setOpen] = useState(false);
     const refetchData = useArticleRefetcher(article, setNewArticleData);
@@ -76,15 +77,30 @@ export function ArticleCard({article, setNewArticleData}: {
                     <span className="text-xs text-gray-500">
                         {moment(article.publishedAt).format("MMM DD, YYYY hh:mm A")}
                     </span>
-                        <Button
-                            variant={"ghost"}
-                            size={"icon"}
-                            onClick={refetchData}
-                        >
-                            <RefreshCw className={cn("h-4 w-4", {
-                                "animate-spin": article.status === ArticleStatus.PROCESSING
-                            })}/>
-                        </Button>
+                        <div className={"flex gap-2 items-center"}>
+                            <Button
+                                variant={"ghost"}
+                                size={"icon"}
+                                onClick={refetchData}
+                            >
+                                <RefreshCw className={cn("h-4 w-4", {
+                                    "animate-spin": article.status === ArticleStatus.PROCESSING
+                                })}/>
+                            </Button>
+                            <Button
+                                variant={"ghost"}
+                                size={"icon"}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    if (onSelectArticle) {
+                                        onSelectArticle(article);
+                                    }
+                                }}
+                            >
+                                <Maximize2 className={"h-4 w-4"}/>
+                            </Button>
+                        </div>
                     </CardFooter>
                 </Card>
             </div>

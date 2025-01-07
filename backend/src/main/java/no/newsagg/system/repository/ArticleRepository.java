@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -66,4 +67,17 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
   List<Article> findAllByUrlIn(Collection<String> urls);
 
   List<Article> findAllByUrlIsIn(Collection<String> urls);
+
+  @Query(value = """
+            SELECT * FROM articles 
+            WHERE status = :status 
+            AND id <> :excludeId
+            ORDER BY embedding <=> CAST(:queryVector AS vector(768))
+            LIMIT :limit
+            """, nativeQuery = true)
+  List<Article> findSimilarArticles(
+      @Param("excludeId") Long excludeId,
+      @Param("queryVector") float[] queryVector,
+      @Param("status") String status,
+      @Param("limit") int limit);
 }

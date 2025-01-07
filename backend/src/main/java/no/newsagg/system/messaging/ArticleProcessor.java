@@ -15,6 +15,12 @@ public class ArticleProcessor {
   private static final long PROCESSING_DELAY_MS = 1000; // 1 second delay
 
   public void queueForProcessing(Article article) {
+    // Sleep for 20ms
+    try {
+      Thread.sleep(20);
+    } catch (InterruptedException e) {
+      log.error("Error while sleeping", e);
+    }
     rabbitTemplate.convertAndSend(
         RabbitMQConfig.EXCHANGE_NAME,
         RabbitMQConfig.ROUTING_KEY,

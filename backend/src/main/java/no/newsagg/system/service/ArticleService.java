@@ -11,13 +11,20 @@ import no.newsagg.system.domain.Article;
 import no.newsagg.system.domain.ArticleStatus;
 import no.newsagg.system.dto.ArticleStatsDTO;
 import no.newsagg.system.ollama.OllamaConfig;
+import no.newsagg.system.ollama.OllamaEmbeddingsResponse;
 import no.newsagg.system.ollama.OllamaResponse;
 import no.newsagg.system.repository.ArticleRepository;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.ai.chat.prompt.PromptTemplate;
 import org.springframework.ai.converter.BeanOutputConverter;
+import org.springframework.ai.embedding.EmbeddingOptionsBuilder;
+import org.springframework.ai.embedding.EmbeddingRequest;
+import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.ollama.OllamaChatModel;
+import org.springframework.ai.ollama.OllamaEmbeddingModel;
+import org.springframework.ai.ollama.api.OllamaApi;
+import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ArticleService {
   private final ArticleRepository articleRepository;
   private final OllamaChatModel ollamaClient = new OllamaConfig().chatClient();
+  private final OllamaEmbeddingModel embeddingsClient = new OllamaConfig().embeddingsClient();
   private final ArticleContentFetcher contentFetcher;
 
   public ArticleStatsDTO getArticleStats() {
@@ -60,12 +68,21 @@ public class ArticleService {
       articleRepository.save(article);
 
       // Fetch article content
-      String content = contentFetcher.fetchContent(article.getUrl());
+      log.debug("Fetching content for article {}", articleId);
+      ArticleContentFetcher.ArticleContent content = contentFetcher.fetchContent(article.getUrl());
+      log.debug("Successfully fetched content for article {}", articleId);
 
       // Generate AI content
-      OllamaResponse aiResponse = generateAiContent(article, content);
+      log.debug("Generating AI content for article {}", articleId);
+      OllamaResponse aiResponse = generateAiContent(article, content.getContent());
       String aiTitle = aiResponse.title();
       String summary = aiResponse.summary();
+      log.debug("Successfully generated AI content for article {}", articleId);
+
+      // Generate embeddings
+      log.debug("Generating embeddings for article {}", articleId);
+      EmbeddingResponse embeddingsResponse = generateEmbeddings(content.getContent());
+      log.debug("Successfully generated embeddings for article {}", articleId);
 
       // Update article
       article.setAiGeneratedTitle(aiTitle);
@@ -73,6 +90,8 @@ public class ArticleService {
       article.setPaywalled(aiResponse.isPaywalled());
       article.setStatus(ArticleStatus.COMPLETED);
       article.setProcessedAt(Instant.now());
+      article.setContent(content.getContent());
+      article.setEmbedding(embeddingsResponse.getResult().getOutput());
 
       articleRepository.save(article);
       log.info("Successfully processed article: {}", article.getId());
@@ -152,5 +171,27 @@ public class ArticleService {
       log.error("Failed to parse AI response: {}", response);
       throw new RuntimeException("Failed to parse AI response", e);
     }
+  }
+
+  private EmbeddingResponse generateEmbeddings(String content) {
+    try {
+      return embeddingsClient.call(new EmbeddingRequest(List.of(content),
+          EmbeddingOptionsBuilder.builder().withModel("nomic-embed-text").withDimensions(1536).build()));
+    } catch (Exception e) {
+      log.error("Failed to parse embeddings response", e);
+      throw new RuntimeException("Failed to parse embeddings response", e);
+    }
+  }
+
+  private double[] convertEmbedding(Double[][] aiEmbeddings) {
+    if (aiEmbeddings == null || aiEmbeddings.length == 0 || aiEmbeddings[0] == null) {
+      return null;
+    }
+    Double[] embedding = aiEmbeddings[0];
+    double[] result = new double[embedding.length];
+    for (int i = 0; i < embedding.length; i++) {
+      result[i] = embedding[i] != null ? embedding[i] : 0.0;
+    }
+    return result;
   }
 }

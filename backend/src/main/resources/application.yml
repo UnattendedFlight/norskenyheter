@@ -10,7 +10,7 @@ spring:
 
   # Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/newsagg
+    url: jdbc:postgresql://localhost:5433/newsagg
     username: newsagg
     password: newsagg
 
@@ -45,6 +45,10 @@ spring:
       base-url: http://localhost:11434
       chat:
         model: llama3.2
+      embedding:
+        model: nomic-embed-text
+        options:
+          num-ctx: 8192
 
 # RSS Feed Configuration
 outlets:

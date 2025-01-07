@@ -11,6 +11,8 @@ import outlets from "@/lib/outlets";
 import {headerSearchAtom} from "@/lib/atoms/search";
 import {FeaturedArticle} from "@/app/components/FeaturedArticle";
 import {ArticleCard} from "@/app/components/ArticleCard";
+import SimilarArticlesDialog from "@/app/components/SimilarArticlesDialog";
+import {selectedArticleAtom} from "@/lib/atoms/article";
 
 export default function NewsFeed() {
     const outlet = useAtomValue(selectedOutletAtom);
@@ -20,6 +22,7 @@ export default function NewsFeed() {
     const canObserveRef = useRef(false);
     const setArticleStats = useSetAtom(outletStatsAtom)
     const PAGE_SIZE = 100;
+    const setSelectedArticle = useSetAtom(selectedArticleAtom);
 
     const query = useInfiniteQuery({
         queryKey: ["news", outletData?.id, {
@@ -167,7 +170,8 @@ export default function NewsFeed() {
             )}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {query.isSuccess && articles.map((article) => (
-                    <ArticleCard key={article.id} article={article} setNewArticleData={setNewArticleData}/>
+                    <ArticleCard key={article.id} article={article} setNewArticleData={setNewArticleData}
+                                 onSelectArticle={setSelectedArticle}/>
                 ))}
                 {query.hasNextPage && (
                     Array.from({length: 5}, (_, i) => (
@@ -199,6 +203,7 @@ export default function NewsFeed() {
                     <div className="text-gray-500">Vi har dessverre ikke eldre artikler</div>
                 ) : null}
             </div>
+            <SimilarArticlesDialog/>
         </div>
     );
 }

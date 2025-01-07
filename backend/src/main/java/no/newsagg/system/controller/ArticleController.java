@@ -1,11 +1,13 @@
 package no.newsagg.system.controller;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import no.newsagg.system.domain.Article;
 import no.newsagg.system.domain.ArticleStatus;
+import no.newsagg.system.dto.ArticleResponseDTO;
 import no.newsagg.system.dto.ArticleStatsDTO;
 import no.newsagg.system.messaging.ArticleProcessor;
 import no.newsagg.system.repository.ArticleRepository;
@@ -35,25 +37,41 @@ public class ArticleController {
 
   @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping
-  public Page<Article> getArticles(
+  public Page<ArticleResponseDTO> getArticles(
       @RequestParam(required = false) String source,
       @RequestParam(required = false) ArticleStatus status,
       @RequestParam(required = false) Instant since,
       @RequestParam(required = false) String query,
       @PageableDefault(sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
 
+    Page<Article> articles;
+
     if (source != null && status != null && since != null) {
-      return articleRepository.findBySourceAndStatusAndPublishedAtAfterSearch(source, status, since,
-          pageable, query);
+      log.debug("Fetching articles by source, status and since: {}, {}, {}", source, status, since);
+      articles = query != null && !query.isEmpty()
+          ? articleRepository.findBySourceAndStatusAndPublishedAtAfterSearch(source, status, since, pageable, query)
+          : articleRepository.findBySourceAndStatusAndPublishedAtAfter(source, status, since, pageable);
     } else if (source != null && status != null) {
-      return articleRepository.findBySourceAndStatusSearch(source, status, pageable, query);
+      log.debug("Fetching articles by source and status: {}, {}", source, status);
+      articles = query != null && !query.isEmpty()
+          ? articleRepository.findBySourceAndStatusSearch(source, status, pageable, query)
+          : articleRepository.findBySourceAndStatus(source, status, pageable);
     } else if (source != null) {
-      return articleRepository.findBySourceSearch(source, pageable, query);
+      log.debug("Fetching articles by source: {}", source);
+      articles = query != null && !query.isEmpty()
+          ? articleRepository.findBySourceSearch(source, pageable, query)
+          : articleRepository.findBySource(source, pageable);
     } else if (status != null) {
-      return articleRepository.findByStatusSearch(status, pageable, query);
+      log.debug("Fetching articles by status: {}", status);
+      articles = query != null && !query.isEmpty()
+          ? articleRepository.findByStatusSearch(status, pageable, query)
+          : articleRepository.findByStatus(status, pageable);
+    } else {
+      log.debug("Fetching all articles");
+      articles = articleRepository.findAll(pageable);
     }
 
-    return articleRepository.findAll(pageable);
+    return articles.map(ArticleResponseDTO::fromArticle);
   }
 
 
@@ -65,14 +83,14 @@ public class ArticleController {
 
   @CrossOrigin(origins = "http://localhost:3000")
   @GetMapping("/{id}")
-  public Article getArticle(@PathVariable Long id) {
-    return articleRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+  public ArticleResponseDTO getArticle(@PathVariable Long id) {
+    return ArticleResponseDTO.fromArticle(articleRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
   }
 
   @CrossOrigin(origins = "http://localhost:3000")
   @PutMapping("/{id}/refetch")
-  public Article refetchArticle(@PathVariable Long id) {
+  public ArticleResponseDTO refetchArticle(@PathVariable Long id) throws InterruptedException {
     Optional<Article> opt = articleRepository.findById(id);
     if (opt.isEmpty()) {
       log.debug("Article not found: {}", id);
@@ -82,7 +100,29 @@ public class ArticleController {
     log.debug("Refetching article: {}", article.getUrl());
     article.setRetryCount(0);
     article.setStatus(ArticleStatus.NEW);
+    articleRepository.save(article);
+    Thread.sleep(20);
     articleProcessor.queueForProcessing(article);
-    return articleRepository.save(article);
+    return ArticleResponseDTO.fromArticle(article);
+  }
+
+  @CrossOrigin(origins = "http://localhost:3000")
+  @GetMapping("/{id}/similar")
+  public List<ArticleResponseDTO> getSimilarArticles(@PathVariable Long id,
+                                          @PageableDefault(sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+    Optional<Article> opt = articleRepository.findById(id);
+    if (opt.isEmpty()) {
+      log.debug("Article not found: {}", id);
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+    Article article = opt.get();
+    log.debug("Fetching similar articles for: {}", article.getUrl());
+    return articleRepository.findSimilarArticles(
+            article.getId(),
+            article.getEmbedding(),
+            ArticleStatus.COMPLETED.toString(),
+            pageable.getPageSize()
+        ).stream()
+        .map(ArticleResponseDTO::fromArticle).toList();
   }
 }

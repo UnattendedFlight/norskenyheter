@@ -1,18 +1,13 @@
 package no.newsagg.system.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
+import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 @Data
 @Entity
@@ -45,6 +40,18 @@ public class Article {
 
   @Column(columnDefinition = "TEXT", nullable = true)
   private String description;
+
+  // Add content field
+  @Column(columnDefinition = "TEXT")
+  private String content;
+
+  // Add embedding field using a custom type for vector(768)
+//  @Column(columnDefinition = "vector(768)")
+//  @JdbcTypeCode(SqlTypes.VECTOR)
+  @Basic
+  @Type(JsonType.class)
+  @Column(name = "embedding", columnDefinition = "vector(768)")
+  private float[] embedding;
 
   @Column(nullable = false)
   private String imageUrl;

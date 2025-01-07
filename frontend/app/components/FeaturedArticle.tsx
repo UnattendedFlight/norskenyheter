@@ -4,11 +4,13 @@ import Link from "next/link"
 import {Article, ArticleStatus} from "@/lib/api/types";
 import moment from "moment";
 import useArticleRefetcher from "@/hooks/use-article-refetcher";
-import {RefreshCw, ShieldAlert} from "lucide-react";
+import {Maximize2, RefreshCw, ShieldAlert} from "lucide-react";
 import {cn} from "@/lib/utils";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {useState} from "react";
 import HoverOver from "@/app/components/HoverOver";
+import {useSetAtom} from "jotai/react";
+import {selectedArticleAtom} from "@/lib/atoms/article";
 
 interface FeaturedArticleProps {
     article: Article;
@@ -17,6 +19,7 @@ interface FeaturedArticleProps {
 
 export function FeaturedArticle({article, setNewArticleData}: FeaturedArticleProps) {
     const refetchData = useArticleRefetcher(article, setNewArticleData);
+    const setArticleId = useSetAtom(selectedArticleAtom);
     const [open, setOpen] = useState(false);
     return (
         <div className="relative h-[50vh] min-h-[400px] w-full overflow-hidden rounded-lg">
@@ -76,6 +79,17 @@ export function FeaturedArticle({article, setNewArticleData}: FeaturedArticlePro
                             <RefreshCw className={cn("h-4 w-4", {
                                 "animate-spin": article.status === ArticleStatus.PROCESSING
                             })}/>
+                        </Button>
+                        <Button
+                            variant={"ghost"}
+                            size={"icon"}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setArticleId(article);
+                            }}
+                        >
+                            <Maximize2 className={"h-4 w-4"}/>
                         </Button>
                     </div>
                 </div>
