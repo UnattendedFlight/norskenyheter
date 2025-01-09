@@ -9,8 +9,10 @@ import org.springframework.ai.ollama.api.OllamaApi;
 import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.ai.ollama.management.ModelManagementOptions;
 import org.springframework.ai.ollama.management.PullModelStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -18,16 +20,28 @@ import reactor.netty.http.client.HttpClient;
 
 @Configuration
 public class OllamaConfig {
+  private final String ollamaUrl;
+
+  public OllamaConfig(@Value("${spring.ai.ollama.base-url}") String ollamaUrl) {
+    this.ollamaUrl = ollamaUrl;
+  }
+  
   @Bean
   public OllamaChatModel chatClient() {
     HttpClient httpClient = HttpClient.create()
         .responseTimeout(Duration.ofMinutes(2))  // Increase timeout for large model responses
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000); // 60 seconds connection timeout
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000) // 60 seconds connection timeout
+        .option(ChannelOption.SO_TIMEOUT, 60000); // 60 seconds connection timeout
 
     WebClient.Builder webClientB = WebClient.builder()
         .clientConnector(new ReactorClientHttpConnector(httpClient));
-    RestClient.Builder restClientB = RestClient.builder();
-    OllamaApi api = new OllamaApi("http://localhost:11434", restClientB, webClientB);
+
+    SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+    factory.setConnectTimeout(Duration.ofSeconds(5));
+    factory.setReadTimeout(Duration.ofMinutes(5));
+
+    RestClient.Builder restClientB = RestClient.builder().requestFactory(factory);
+    OllamaApi api = new OllamaApi(ollamaUrl, restClientB, webClientB);
     OllamaOptions options = OllamaOptions.builder()
         // .withModel(OllamaModel.LLAMA3_2.getName())
         // .withModel("aya")
@@ -50,12 +64,18 @@ public class OllamaConfig {
   public OllamaEmbeddingModel embeddingsClient() {
     HttpClient httpClient = HttpClient.create()
         .responseTimeout(Duration.ofMinutes(2))  // Increase timeout for large model responses
-        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000); // 60 seconds connection timeout
+        .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 60000) // 60 seconds connection timeout
+        .option(ChannelOption.SO_TIMEOUT, 60000); // 60 seconds connection timeout
 
     WebClient.Builder webClientB = WebClient.builder()
         .clientConnector(new ReactorClientHttpConnector(httpClient));
-    RestClient.Builder restClientB = RestClient.builder();
-    OllamaApi api = new OllamaApi("http://localhost:11434", restClientB, webClientB);
+
+    SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+    factory.setConnectTimeout(Duration.ofSeconds(5));
+    factory.setReadTimeout(Duration.ofMinutes(5));
+
+    RestClient.Builder restClientB = RestClient.builder().requestFactory(factory);
+    OllamaApi api = new OllamaApi(ollamaUrl, restClientB, webClientB);
     OllamaOptions options = OllamaOptions.builder()
         .withModel("nomic-embed-text")
         .build();

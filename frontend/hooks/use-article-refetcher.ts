@@ -1,13 +1,14 @@
 import {Article, ArticleStatus} from "@/lib/api/types";
 import {useCallback, useEffect, useRef} from "react";
 import axios from "axios";
+import {API_URL} from "@/lib/constants/global";
 
 export default function useArticleRefetcher(article: Article, updateArticle: (article: Article) => void) {
     const refetchRef = useRef<NodeJS.Timeout | null>(null);
     const sendingRefetchRef = useRef(false);
 
     const checkStatus = useCallback(async () => {
-        const {data} = await axios.get<Article>(`http://localhost:8080/api/articles/${article.id}`);
+        const {data} = await axios.get<Article>(`${API_URL}/api/articles/${article.id}`);
         if (!data || data.status !== ArticleStatus.COMPLETED) {
             refetchRef.current = setTimeout(() => {
                 checkStatus();
@@ -30,7 +31,7 @@ export default function useArticleRefetcher(article: Article, updateArticle: (ar
             clearTimeout(refetchRef.current);
         }
         sendingRefetchRef.current = true;
-        await axios.put(`http://localhost:8080/api/articles/${article.id}/refetch`);
+        await axios.put(`${API_URL}/api/articles/${article.id}/refetch`);
         sendingRefetchRef.current = false;
         updateArticle({
             ...article,

@@ -37,7 +37,7 @@ export default function useSearchInput({
                                            options = {},
                                        }: UseSearchInputProps) {
     const [value, setValue] = useState(defaultValue);
-    const [debouncedValue, cancelDebouncedValue] = useDebouncedValue(value, delay, options as any);
+    const [debouncedValue,] = useDebouncedValue(value, delay, options as never);
     const throttledValue = useThrottledValue(value, delay);
     const useValue = useMemo(() => {
         switch (type) {

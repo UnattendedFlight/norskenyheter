@@ -10,6 +10,7 @@ import {Article} from "@/lib/api/types";
 import {ArticleCard} from "@/app/components/ArticleCard";
 import Image from "next/image";
 import HoverOver from "@/app/components/HoverOver";
+import {API_URL} from "@/lib/constants/global";
 
 export default function SimilarArticlesDialog() {
     const [article, setArticle] = useAtom(selectedArticleAtom)
@@ -20,10 +21,11 @@ export default function SimilarArticlesDialog() {
     const similarArticlesQuery = useQuery({
         queryKey: ["articles", article?.id ?? null, "similar"],
         queryFn: async () => {
-            const {data} = await axios.get<Array<Article>>(`http://localhost:8080/api/articles/${article.id}/similar`);
+            if (!article) return [];
+            const {data} = await axios.get<Array<Article>>(`${API_URL}/api/articles/${article?.id}/similar`);
             return data;
         },
-        enabled: open
+        enabled: open && article !== null
     })
     return (
         <Dialog open={open} onOpenChange={onClose}>
@@ -65,7 +67,7 @@ export default function SimilarArticlesDialog() {
                 )}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-y-auto max-h-[50vh]">
                     {similarArticlesQuery.data?.map(article => (
-                        <ArticleCard article={article} setNewArticleData={(a) => {
+                        <ArticleCard article={article} setNewArticleData={() => {
                         }} key={`similar-article-${article.articleId}`} onSelectArticle={setArticle}/>
                     ))}
                 </div>

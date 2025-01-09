@@ -1,0 +1,136 @@
+# CPU-only version
+version: '3.8'
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    hostname: ollama
+    volumes:
+      - ollama_data:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: newsagg-postgres
+    hostname: postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: H3uphef2
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: newsagg-rabbitmq
+    hostname: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: newsagg
+      RABBITMQ_DEFAULT_PASS: newsagg
+      RABBITMQ_DEFAULT_VHOST: /newsagg
+    ports:
+      - "5672:5672"   # AMQP protocol port
+      - "15672:15672" # Management interface port
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "check_port_connectivity" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    command: >
+      sh -c "
+        chmod 600 /var/lib/rabbitmq/.erlang.cookie &&
+        chown rabbitmq:rabbitmq /var/lib/rabbitmq/.erlang.cookie &&
+        rabbitmq-server
+      "
+
+  # Initialization service for PostgreSQL
+  postgres-init:
+    image: pgvector/pgvector:pg16
+    container_name: newsagg-postgres-init
+    volumes:
+      - /mnt/user/web-dev/ntnu/norskenyheter/scripts:/scripts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: [ "/scripts/init.sh" ]
+
+  app:
+    image: openjdk:21-slim
+    container_name: newsagg-system
+    hostname: backend
+    volumes:
+      - /mnt/user/web-dev/ntnu/norskenyheter/system-0.0.1-SNAPSHOT.jar:/app/app.jar
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/newsagg
+      - SPRING_DATASOURCE_USERNAME=newsagg
+      - SPRING_DATASOURCE_PASSWORD=newsagg
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_AI_OLLAMA_BASEURL=http://ollama:11434
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=newsagg
+      - SPRING_RABBITMQ_PASSWORD=newsagg
+      - SPRING_RABBITMQ_VIRTUALHOST=/newsagg
+    command: [ "java", "-jar", "/app/app.jar" ]
+    depends_on:
+      - postgres
+      - rabbitmq
+      - ollama
+    restart: unless-stopped
+
+  frontend:
+    image: node:20-alpine
+    container_name: newsagg-frontend
+    working_dir: /app
+    volumes:
+      - /mnt/user/web-dev/ntnu/norskenyheter/frontend:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:8080
+    command: >
+      sh -c "npm install &&
+             npm run build &&
+             npm start"
+    depends_on:
+      - app
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+    name: newsagg_ollama_data
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/ollama
+      o: bind
+
+  postgres_data:
+    name: newsagg_postgres_data
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/postgres
+      o: bind
+  rabbitmq_data:
+    name: newsagg_rabbitmq_data
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/rabbitmq
+      o: bind

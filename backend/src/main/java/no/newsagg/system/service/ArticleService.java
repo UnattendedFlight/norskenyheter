@@ -33,8 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ArticleService {
   private final ArticleRepository articleRepository;
-  private final OllamaChatModel ollamaClient = new OllamaConfig().chatClient();
-  private final OllamaEmbeddingModel embeddingsClient = new OllamaConfig().embeddingsClient();
+  private final OllamaConfig ollamaConfig;
+  //private final OllamaChatModel ollamaClient = new OllamaConfig().chatClient();
+  //private final OllamaEmbeddingModel embeddingsClient = new OllamaConfig().embeddingsClient();
   private final ArticleContentFetcher contentFetcher;
 
   public ArticleStatsDTO getArticleStats() {
@@ -159,6 +160,8 @@ public class ArticleService {
         new PromptTemplate(prompt, Map.of("format", converter.getFormat()));
     Prompt aiPrompt = new Prompt(promptTemplate.createMessage());
 
+    OllamaChatModel ollamaClient = this.ollamaConfig.chatClient();
+
     ChatResponse response = ollamaClient.call(aiPrompt);
     try {
       String content = response.getResult().getOutput().getContent().strip();
@@ -175,6 +178,7 @@ public class ArticleService {
 
   private EmbeddingResponse generateEmbeddings(String content) {
     try {
+      OllamaEmbeddingModel embeddingsClient = this.ollamaConfig.embeddingsClient();
       return embeddingsClient.call(new EmbeddingRequest(List.of(content),
           EmbeddingOptionsBuilder.builder().withModel("nomic-embed-text").withDimensions(1536).build()));
     } catch (Exception e) {

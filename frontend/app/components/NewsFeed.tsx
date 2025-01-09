@@ -13,6 +13,7 @@ import {FeaturedArticle} from "@/app/components/FeaturedArticle";
 import {ArticleCard} from "@/app/components/ArticleCard";
 import SimilarArticlesDialog from "@/app/components/SimilarArticlesDialog";
 import {selectedArticleAtom} from "@/lib/atoms/article";
+import {API_URL} from "@/lib/constants/global";
 
 export default function NewsFeed() {
     const outlet = useAtomValue(selectedOutletAtom);
@@ -36,7 +37,13 @@ export default function NewsFeed() {
                 }
             }
 
-            const params: any = {
+            const params: {
+                status: string;
+                page: number;
+                size: number;
+                query?: string;
+                source?: string;
+            } = {
                 status: "COMPLETED",
                 page: pageParam,
                 size: PAGE_SIZE,
@@ -46,7 +53,7 @@ export default function NewsFeed() {
             if (outlet !== "all" && outletData) {
                 params.source = outletData.name;
             }
-            const response = await axios.get<ArticlePageResponse>(`http://localhost:8080/api/articles`, {
+            const response = await axios.get<ArticlePageResponse>(`${API_URL}/api/articles`, {
                 params,
             });
             return response.data;
@@ -69,7 +76,7 @@ export default function NewsFeed() {
     const articleStats = useQuery({
         queryKey: ["news", "stats"],
         queryFn: async () => {
-            const response = await axios.get<ArticleStats>(`http://localhost:8080/api/articles/stats`);
+            const response = await axios.get<ArticleStats>(`${API_URL}/api/articles/stats`);
             setArticleStats(response.data);
             return response.data;
         },

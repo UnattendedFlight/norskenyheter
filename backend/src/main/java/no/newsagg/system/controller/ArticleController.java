@@ -35,7 +35,7 @@ public class ArticleController {
   private final ArticleProcessor articleProcessor;
   private final ArticleService articleService;
 
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
   @GetMapping
   public Page<ArticleResponseDTO> getArticles(
       @RequestParam(required = false) String source,
@@ -75,20 +75,20 @@ public class ArticleController {
   }
 
 
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/stats")
   public ArticleStatsDTO getArticleStats() {
     return articleService.getArticleStats();
   }
 
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/{id}")
   public ArticleResponseDTO getArticle(@PathVariable Long id) {
     return ArticleResponseDTO.fromArticle(articleRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
   }
 
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
   @PutMapping("/{id}/refetch")
   public ArticleResponseDTO refetchArticle(@PathVariable Long id) throws InterruptedException {
     Optional<Article> opt = articleRepository.findById(id);
@@ -106,7 +106,7 @@ public class ArticleController {
     return ArticleResponseDTO.fromArticle(article);
   }
 
-  @CrossOrigin(origins = "http://localhost:3000")
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/{id}/similar")
   public List<ArticleResponseDTO> getSimilarArticles(@PathVariable Long id,
                                           @PageableDefault(sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {

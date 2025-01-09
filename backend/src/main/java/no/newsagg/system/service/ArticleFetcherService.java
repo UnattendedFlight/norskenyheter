@@ -1,5 +1,6 @@
 package no.newsagg.system.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,26 +23,41 @@ public class ArticleFetcherService {
   private final ArticleProcessor articleProcessor;
 
   @Scheduled(fixedDelayString = "${app.fetch-interval:300000}")  // Default 5 minutes
-  @Transactional
+//  @Transactional
   public void fetchArticles() {
     newsOutlets.forEach(outlet -> {
+      List<Article> createdArticles = new ArrayList<>();
       try {
         List<RawArticle> rawArticles = outlet.fetchArticles();
         log.info("Found {} articles from {}", rawArticles.size(), outlet.getName());
 
         for (RawArticle rawArticle : rawArticles) {
-          processRawArticle(rawArticle);
+          Article processedArticle = processRawArticle(rawArticle);
+          if (processedArticle != null) {
+            createdArticles.add(processedArticle);
+          }
         }
       } catch (Exception e) {
         log.error("Error processing outlet {}: {}", outlet.getName(), e.getMessage(), e);
       }
+      if (!createdArticles.isEmpty()) {
+        try {
+          log.info("Processing {} articles from {}", createdArticles.size(), outlet.getName());
+          for (Article article : createdArticles) {
+            articleProcessor.queueForProcessing(article);
+            log.debug("Queued new article: {}", article.getUrl());
+          }
+        } catch (Exception e) {
+          log.error("Error processing articles from {}: {}", outlet.getName(), e.getMessage(), e);
+        }
+      }
     });
   }
 
-  private void processRawArticle(RawArticle rawArticle) {
+  private Article processRawArticle(RawArticle rawArticle) {
     try {
       if (articleRepository.existsByUrl(rawArticle.getUrl())) {
-        return;
+        return null;
       }
       Article article = Article.builder()
           .url(rawArticle.getUrl())
@@ -56,11 +72,10 @@ public class ArticleFetcherService {
           .build();
 
       article = articleRepository.save(article);
-      Thread.sleep(10); // Wait for the article to be persisted before processing, java too fast
-      articleProcessor.queueForProcessing(article);
-      log.debug("Queued new article: {}", article.getUrl());
+      return article;
     } catch (Exception e) {
       log.error("Error processing article {}: {}", rawArticle.getUrl(), e.getMessage());
     }
+    return null;
   }
 }

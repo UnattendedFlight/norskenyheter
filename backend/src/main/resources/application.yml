@@ -38,6 +38,10 @@ spring:
           enabled: true
           initial-interval: 3s
           max-attempts: 3
+  #  task:
+  #    scheduling:
+  #      pool:
+  #        size: 2
 
   # AI Configuration
   ai:
@@ -51,64 +55,1060 @@ spring:
           num-ctx: 8192
 
 # RSS Feed Configuration
+# /rss
+# /feed
+# /service/rich-rss
 outlets:
   vg:
     name: VG
-    feed-url: https://www.vg.no/rss/feed
+    feed-url: https://vg.no/rss/feed
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   nrk:
     name: NRK
     feed-urls:
-      - https://www.nrk.no/toppsaker.rss
-      # - https://www.nrk.no/nyheter/siste.rss
-      - https://www.nrk.no/norge/toppsaker.rss
+      - https://nrk.no/toppsaker.rss
+      # - https://nrk.no/nyheter/siste.rss
+      - https://nrk.no/norge/toppsaker.rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   db:
     name: Dagbladet
-    feed-url: https://www.dagbladet.no/?lab_viewport=rss
+    feed-url: https://dagbladet.no/?lab_viewport=rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   ap:
     name: Aftenposten
-    feed-url: https://www.aftenposten.no/rss
+    feed-url: https://aftenposten.no/rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   tv2:
     name: TV2
-    feed-url: https://www.tv2.no/rss/nyheter
+    feed-url: https://tv2.no/rss/nyheter
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   na:
     name: Nettavisen
-    feed-url: https://www.nettavisen.no/service/rich-rss?tag=nyheter
+    feed-url: https://nettavisen.no/service/rich-rss?tag=nyheter
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   bt:
     name: Bergens Tidende
-    feed-url: https://www.bt.no/rss
+    feed-url: https://bt.no/rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   ab:
     name: Aftenbladet
-    feed-url: https://www.aftenbladet.no/rss
+    feed-url: https://aftenbladet.no/rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
   aa:
     name: Adresseavisen
-    feed-url: https://www.adressa.no/rss
+    feed-url: https://adressa.no/rss
     language: nb
     enabled: true
     fetch-interval-minutes: 5
+  avisenagder:
+    name: Avisen Agder
+    feed-url: https://avisenagder.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  agderposten:
+    name: Agderposten
+    feed-url: https://agderposten.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  groruddalen:
+    name: Groruddalen
+    feed-url: https://groruddalen.no/feed/
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  amta:
+    name: Amta
+    feed-url: https://amta.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  altaposten:
+    name: Altaposten
+    feed-url: https://altaposten.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  retten:
+    name: Retten
+    feed-url: https://retten.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  arendalstidende:
+    name: Arendals Tidende
+    feed-url: https://arendalstidende.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  askoyvaringen:
+    name: Askøyværingen
+    feed-url: https://askoyv.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  auraavis:
+    name: Aura Avis
+    feed-url: https://auraavis.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  austagderblad:
+    name: Aust-Agder Blad
+    feed-url: https://austagderblad.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  an:
+    name: AN
+    feed-url: https://an.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  ba:
+    name: Bergensavisen
+    feed-url: https://ba.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  birkenesavisa:
+    name: Birkenesavisa
+    feed-url: https://birkenes-avisa.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bladet:
+    name: Bladet
+    feed-url: https://bladet.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  blv:
+    name: BLV
+    feed-url: https://blv.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bodoposten:
+    name: Bodøposten
+    feed-url: https://xn--bodposten-n8a.no/feed/
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  budstikka:
+    name: Budstikka
+    feed-url: https://budstikka.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bygdanytt:
+    name: Bygdanytt
+    feed-url: https://bygdanytt.no/rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bygdebladet:
+    name: Bygdebladet
+    feed-url: https://bygdebladet.no/service/rich-rss
+    language: nb
+    enabled: true
+    fetch-interval-minutes: 5
+  bygdeposten:
+    name: Bygdeposten
+    feed-url: https://bygdeposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  bomlonytt:
+    name: Bømlo-nytt
+    feed-url: https://bomlo-nytt.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  dagogtid:
+    name: Dag og Tid
+    feed-url: https://dagogtid.no/feed
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  dagsavisen:
+    name: Dagsavisen
+    feed-url: https://dagsavisen.no/arc/outboundfeeds/rss/
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  dalanetidende:
+    name: Dalane Tidende
+    feed-url: https://dalane-tidende.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  digi:
+    name: Digi
+    feed-url: https://digi.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  dt:
+    name: DT
+    feed-url: https://dt.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  drangedalsposten:
+    name: Drangedalsposten
+    feed-url: https://drangedalsposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  driva:
+    name: Driva
+    feed-url: https://driva.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  dolen:
+    name: Dølen
+    feed-url: https://dolen.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  e24:
+    name: E24
+    feed-url: https://e24.no/rss
+    language: no #Assumed language based on context
+    enabled: true
+    fetch-interval-minutes: 5
+  eub:
+    name: EUB
+    feed-url: https://eub.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  eikernytt:
+    name: Eikernytt
+    feed-url: https://eikernytt.no/rss
+    language: nb-NO
+    enabled: true
+    fetch-interval-minutes: 5
+  enebakkavis:
+    name: Enebakk Avis
+    feed-url: https://enebakkavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  energi24:
+    name: Energi24
+    feed-url: https://energi24.no/rss
+    language: nb-NO
+    enabled: true
+    fetch-interval-minutes: 5
+  f7:
+    name: F7
+    feed-url: https://f7.no/rss
+    language: nb-NO
+    enabled: true
+    fetch-interval-minutes: 5
+  fanaposten:
+    name: Fanaposten
+    feed-url: https://fanaposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  firda:
+    name: Firda
+    feed-url: https://firda.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  firdatidend:
+    name: Firda Tidend
+    feed-url: https://firdatidend.no/rss
+    language: nb-NO
+    enabled: true
+    fetch-interval-minutes: 5
+  firdaposten:
+    name: Firdaposten
+    feed-url: https://firdaposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  fitjarposten:
+    name: Fitjarposten
+    feed-url: https://fitjarposten.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fjordabladet:
+    name: Fjordabladet
+    feed-url: https://fjordabladet.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fjordenestidende:
+    name: Fjordenes Tidende
+    feed-url: https://fjt.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fjordingen:
+    name: Fjordingen
+    feed-url: https://fjordingen.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  folkebladet:
+    name: Folkebladet
+    feed-url: https://folkebladet.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fosnafolket:
+    name: Fosna Folket
+    feed-url: https://fosna-folket.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fjuken:
+    name: Fjuken
+    feed-url: https://fjuken.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  framtidinord:
+    name: Framtid i Nord
+    feed-url: https://framtidinord.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  fb:
+    name: Fredriksstad Blad
+    feed-url: https://f-b.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  fremover:
+    name: Fremover
+    feed-url: https://fremover.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  frostingen:
+    name: Frostingen
+    feed-url: https://frostingen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  fvn:
+    name: Fædrelandsvennen
+    feed-url: https://fvn.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  gjengangeren:
+    name: Gjengangeren
+    feed-url: https://gjengangeren.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  gjesdalbuen:
+    name: Gjesdalbuen
+    feed-url: https://gjesdalbuen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  globaltperspektiv:
+    name: Globalt Perspektiv
+    feed-url: https://globaltperspektiv.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  glomdalen:
+    name: Glåmdalen
+    feed-url: https://glomdalen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  grannar:
+    name: Grannar
+    feed-url: https://grannar.no/feed/
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  grenda:
+    name: Grenda
+    feed-url: https://grenda.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  gat:
+    name: Grimstad Adressetidende
+    feed-url: https://gat.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  gd:
+    name: Gudbrandsdølen Dagningen
+    feed-url: https://gd.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  hadeland:
+    name: Hadeland
+    feed-url: https://hadeland.net/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  haldenarbeiderblad:
+    name: Halden Arbeiderblad
+    feed-url: https://ha-halden.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  hallingdolen:
+    name: Hallingdølen
+    feed-url: https://hallingdolen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ha:
+    name: Hamar Arbeiderblad
+    feed-url: https://h-a.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  hf:
+    name: Hardanger Folkeblad
+    feed-url: https://hardanger-folkeblad.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ht:
+    name: Hardanger Tidende
+    feed-url: https://ht.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  haugesundavis:
+    name: Haugesund Avis
+    feed-url: https://h-avis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  helgelendingen:
+    name: Helgelendingen
+    feed-url: https://helg.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  helgelandsblad:
+    name: Helgelands Blad
+    feed-url: https://hblad.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  heroyfjerdingen:
+    name: Herøyfjerdingen
+    feed-url: https://heroyfjerdingen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  hitrafroya:
+    name: Hitra-Frøya
+    feed-url: https://hitra-froya.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  avisahordaland:
+    name: Avisa Hordaland
+    feed-url: https://avisa-hordaland.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  hordalandfolkeblad:
+    name: Hordaland Folkeblad
+    feed-url: https://hf.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ifinnmark:
+    name: iFinnmark
+    feed-url: https://ifinnmark.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  indre24:
+    name: Indre24
+    feed-url: https://indre24.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  itromso:
+    name: iTromsø
+    feed-url: https://itromso.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  itavisen:
+    name: ITavisen
+    feed-url: https://itavisen.no/feed
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  indre:
+    name: Indre Akershus Blad
+    feed-url: https://indre.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  jarlsbergavis:
+    name: Jarlsberg Avis
+    feed-url: https://jarlsbergavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  jbl:
+    name: Jærbladet
+    feed-url: https://jbl.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  karmoynytt:
+    name: Karmøynytt
+    feed-url: https://karmoynytt.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  klartale:
+    name: Klar Tale
+    feed-url: https://klartale.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  kv:
+    name: Kragerø Blad Vestmar
+    feed-url: https://kv.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  kvinnheringen:
+    name: Kvinnheringen
+    feed-url: https://kvinnheringen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  laagendalsposten:
+    name: Lågendalsposten
+    feed-url: https://laagendalsposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lierposten:
+    name: Lierposten
+    feed-url: https://lierposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lp:
+    name: Lillesands-Posten
+    feed-url: https://lp.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lindsnesavis:
+    name: Lindsnes Avis
+    feed-url: https://l-a.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lister24:
+    name: Lister24
+    feed-url: https://lister24.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lofottidende:
+    name: Lofot-Tidende
+    feed-url: https://lofot-tidende.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lofotposten:
+    name: Lofotposten
+    feed-url: https://lofotposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lyngdalsavis:
+    name: Lyngdals Avis
+    feed-url: https://lyngdalsavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  morgenbladet:
+    name: Morgenbladet
+    feed-url: https://morgenbladet.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  mossavis:
+    name: Moss Avis
+    feed-url: https://moss-avis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  namdalsavisa:
+    name: Namdalsavisa
+    feed-url: https://namdalsavisa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  nationen:
+    name: Nationen
+    feed-url: https://nationen.no/service/rich-rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  nordhordland:
+    name: Nordhordland
+    feed-url: https://nordhordland.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  nordlys:
+    name: Nordlys
+    feed-url: https://nordlys.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  noblad:
+    name: Nordstrands Blad
+    feed-url: https://noblad.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  numedal:
+    name: Numedalsnett
+    feed-url: https://numedal.net/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  nytid:
+    name: Ny Tid
+    feed-url: https://nytid.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  nyttiuka:
+    name: NyttiUka
+    feed-url: https://nyttiuka.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  opdalingen:
+    name: Opdalingen
+    feed-url: https://opdalingen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ofotingen:
+    name: Ofotingen
+    feed-url: https://ofotingen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  opp:
+    name: OPP
+    feed-url: https://opp.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  opplandarbeiderblad:
+    name: Oppland Arbeiderblad
+    feed-url: https://oa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  pd:
+    name: Porsgrunns Dagblad
+    feed-url: https://pd.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ra:
+    name: Rakkestad Avis
+    feed-url: https://r-a.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rb:
+    name: Ranablad
+    feed-url: https://ranablad.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rn:
+    name: Raumnes
+    feed-url: https://raumnes.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rs:
+    name: Resett
+    feed-url: https://resett.no/rss
+    language: no
+    enabled: true
+    fetch-interval-minutes: 5
+  rblad:
+    name: Ringblad
+    feed-url: https://ringblad.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rogalindsavis:
+    name: Rogalands Avis
+    feed-url: https://rogalandsavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  romerikesblad:
+    name: Romerikes Blad
+    feed-url: https://rb.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rbnett:
+    name: Romsdals Budstikke
+    feed-url: https://rbnett.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ryfylke:
+    name: Ryfylke
+    feed-url: https://ryfylke.net/feed
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  rha:
+    name: Røyken og Hurums Avis
+    feed-url: https://rha.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sandeavis:
+    name: Sande Avis
+    feed-url: https://sandeavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sb:
+    name: Sandefjords Blad
+    feed-url: https://sb.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sp:
+    name: Sandnesposten
+    feed-url: https://sandnesposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sarpsborgarbeiderblad:
+    name: Sarpsborg Arbeiderblad
+    feed-url: https://sa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sma:
+    name: Smaalenenes Avis
+    feed-url: http://www.smaalenene.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sognavis:
+    name: Sognavis
+    feed-url: http://www.sognavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  solabladet:
+    name: Solabladet
+    feed-url: http://www.solabladet.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sta:
+    name: Stangeavisa
+    feed-url: http://stangeavisa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  staf:
+    name: Stavanger Aftenblad
+    feed-url: https://www.aftenbladet.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  stka:
+    name: Steinkjer-Avisa
+    feed-url: http://www.steinkjer-avisa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  stbu:
+    name: Strandbuen
+    feed-url: http://www.strandbuen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  str:
+    name: Strilen
+    feed-url: http://www.strilen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sh:
+    name: Sunnhordland
+    feed-url: http://www.sunnhordland.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sm:
+    name: Sunnmoringen
+    feed-url: http://www.sunnmoringen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  smp:
+    name: Sunnmørsposten
+    feed-url: http://www.smp.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  svp:
+    name: Svelviksposten
+    feed-url: http://svelviksposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sv:
+    name: Sydvesten
+    feed-url: http://www.sydvesten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  sns:
+    name: Synste Møre
+    feed-url: https://synste.no/feed
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ast:
+    name: Avisa Sør-Trøndelag
+    feed-url: http://www.avisa-st.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  lat:
+    name: Lokalavisa Trysil
+    feed-url: http://www.lokal-avisa.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ta:
+    name: Telemarksavisa
+    feed-url: http://www.ta.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  telen:
+    name: Telen
+    feed-url: http://telen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tk:
+    name: Tidens Krav
+    feed-url: http://www.tk.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  trby:
+    name: Tromsø By
+    feed-url: http://tromsoby.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tronderavisa:
+    name: Trønder-Avisa
+    feed-url: http://www.t-a.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tronderbladet:
+    name: Trønderbladet
+    feed-url: http://www.tronderbladet.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tvedestrandsposten:
+    name: Tvedestrandsposten
+    feed-url: http://www.tvedestrandsposten.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tysbb:
+    name: Tysvær Bygdeblad
+    feed-url: https://tysver-bygdeblad.no/feed
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  tb:
+    name: Tønsbergs Blad
+    feed-url: http://tb.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vkp:
+    name: Vaksdalposten
+    feed-url: https://www.vp.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  avv:
+    name: Avisa Valdres
+    feed-url: http://www.avisa-valdres.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  var:
+    name: Varden
+    feed-url: http://www.varden.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  varingen:
+    name: Varingen
+    feed-url: http://www.varingen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vennesla:
+    name: Vennesla Tidende
+    feed-url: http://www.venneslatidende.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vestlandsnytt:
+    name: Vestlandsnytt
+    feed-url: http://www.vestlandsnytt.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vtb:
+    name: Vest-Telemark Blad
+    feed-url: http://www.vtb.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vestbyavis:
+    name: Vestby Avis
+    feed-url: http://www.vestbyavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vol:
+    name: VOL
+    feed-url: http://www.vol.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vestkantavisen:
+    name: Vestkantavisen
+    feed-url: http://www.vestkantavisen.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vestnytt:
+    name: Vestnytt
+    feed-url: http://vestnytt.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vikebladet:
+    name: Vikebladet
+    feed-url: http://www.vikebladet.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vigga:
+    name: Vigga
+    feed-url: http://www.vigga.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  vl:
+    name: Vårt Land
+    feed-url: http://www.vl.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ob:
+    name: Østlandets Blad
+    feed-url: http://www.oblad.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  op:
+    name: Østlands-Posten
+    feed-url: http://www.op.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  ol:
+    name: Østlendingen
+    feed-url: http://www.ostlendingen.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  oyblikk:
+    name: ØyBlikk
+    feed-url: http://www.oyblikk.no/rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  oyene:
+    name: Øyene
+    feed-url: http://www.oyene.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+  aasavis:
+    name: Ås Avis
+    feed-url: http://www.aasavis.no/service/rich-rss
+    language: nb-no
+    enabled: true
+    fetch-interval-minutes: 5
+
+
+
 
 # Application specific settings
 app:

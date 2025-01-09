@@ -1,17 +1,14 @@
 'use client';
 
 import Link from "next/link"
-import {Button} from "@/components/ui/button"
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
-import {useState} from "react"
 import OutletSelector from "@/app/components/OutletSelector";
 import QueryKeyRefresh from "@/app/components/QueryKeyRefresh";
 import SearchInput from "@/app/components/SearchInput";
 
-const categories = ["Alle kategorier", "Nyheter", "Sport", "Kultur", "Økonomi", "Teknologi"]
+// const categories = ["Alle kategorier", "Nyheter", "Sport", "Kultur", "Økonomi", "Teknologi"]
 
 export function SiteHeader() {
-    const [selectedCategory, setSelectedCategory] = useState("Alle kategorier");
+    // const [selectedCategory, setSelectedCategory] = useState("Alle kategorier");
 
     return (
         <header
@@ -25,23 +22,23 @@ export function SiteHeader() {
                 <div className="flex flex-1 items-center justify-end space-x-4">
                     <div className="w-full flex items-end space-x-4 max-w-xl">
                         <OutletSelector/>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="outline" className="w-[160px] justify-between">
-                                    {selectedCategory}
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                {categories.map((category) => (
-                                    <DropdownMenuItem
-                                        key={category}
-                                        onClick={() => setSelectedCategory(category)}
-                                    >
-                                        {category}
-                                    </DropdownMenuItem>
-                                ))}
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {/*<DropdownMenu>*/}
+                        {/*    <DropdownMenuTrigger asChild>*/}
+                        {/*        <Button variant="outline" className="w-[160px] justify-between">*/}
+                        {/*            {selectedCategory}*/}
+                        {/*        </Button>*/}
+                        {/*    </DropdownMenuTrigger>*/}
+                        {/*    <DropdownMenuContent>*/}
+                        {/*        {categories.map((category) => (*/}
+                        {/*            <DropdownMenuItem*/}
+                        {/*                key={category}*/}
+                        {/*                onClick={() => setSelectedCategory(category)}*/}
+                        {/*            >*/}
+                        {/*                {category}*/}
+                        {/*            </DropdownMenuItem>*/}
+                        {/*        ))}*/}
+                        {/*    </DropdownMenuContent>*/}
+                        {/*</DropdownMenu>*/}
                         <QueryKeyRefresh queryKey={["news"]} exact={false}/>
                         <SearchInput/>
                         {/*<ViewToggle/>
