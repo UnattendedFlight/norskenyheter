@@ -16,7 +16,6 @@ export default function OutletSelector() {
             {value: "all", label: "Alle"},
             ...outlets.map((outlet) => {
                 const stat = stats?.articlesPerSource[outlet.name];
-                console.log(stat);
                 return {
                     value: outlet.id,
                     label: `${outlet.name} (${stat || 0})`
