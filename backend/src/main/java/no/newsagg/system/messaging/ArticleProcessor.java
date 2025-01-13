@@ -28,4 +28,14 @@ public class ArticleProcessor {
     log.debug("Queued article {} for processing with {}ms delay", article.getId(),
         PROCESSING_DELAY_MS);
   }
+
+  public void queueForCategoryProcessing(Article article) {
+    rabbitTemplate.convertAndSend(
+        RabbitMQConfig.EXCHANGE_NAME,
+        RabbitMQConfig.CATEGORY_ROUTING_KEY,
+        article.getId()
+    );
+    log.debug("Queued article {} for category processing with {}ms delay", article.getId(),
+        PROCESSING_DELAY_MS);
+  }
 }

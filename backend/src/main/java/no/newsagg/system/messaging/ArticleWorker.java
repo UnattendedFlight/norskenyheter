@@ -17,6 +17,17 @@ class ArticleWorker {
   public void processArticle(Long articleId) {
     try {
       articleService.processArticle(articleId);
+      articleService.processArticleCategory(articleId);
+    } catch (Exception e) {
+      log.error("Error processing article {}: {}", articleId, e.getMessage(), e);
+      // log.error("Error processing article {}", articleId);
+    }
+  }
+
+  @RabbitListener(queues = RabbitMQConfig.CATEGORY_QUEUE_NAME)
+  public void processArticleCategories(Long articleId) {
+    try {
+      articleService.processArticleCategory(articleId);
     } catch (Exception e) {
       log.error("Error processing article {}: {}", articleId, e.getMessage(), e);
       // log.error("Error processing article {}", articleId);

@@ -26,7 +26,7 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: H3uphef2
+      POSTGRES_PASSWORD: postgres
     ports:
       - "5433:5432"
     volumes:
@@ -67,7 +67,7 @@ services:
     image: pgvector/pgvector:pg16
     container_name: newsagg-postgres-init
     volumes:
-      - /mnt/user/web-dev/ntnu/norskenyheter/scripts:/scripts
+      - ./scripts:/scripts
     depends_on:
       postgres:
         condition: service_healthy
@@ -78,7 +78,7 @@ services:
     container_name: newsagg-system
     hostname: backend
     volumes:
-      - /mnt/user/web-dev/ntnu/norskenyheter/system-0.0.1-SNAPSHOT.jar:/app/app.jar
+      - ./system-0.0.1-SNAPSHOT.jar:/app/app.jar
     ports:
       - "8080:8080"
     environment:
@@ -101,7 +101,7 @@ services:
 
   frontend:
     build:
-      context: /mnt/user/web-dev/ntnu/norskenyheter/frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: newsagg-frontend
     ports:
@@ -118,7 +118,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/ollama
+      device: ./docker-data/ollama
       o: bind
 
   postgres_data:
@@ -126,12 +126,12 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/postgres
+      device: ./docker-data/postgres
       o: bind
   rabbitmq_data:
     name: newsagg_rabbitmq_data
     driver: local
     driver_opts:
       type: none
-      device: /mnt/user/web-dev/ntnu/norskenyheter/docker-data/rabbitmq
+      device: ./docker-data/rabbitmq
       o: bind

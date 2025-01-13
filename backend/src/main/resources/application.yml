@@ -38,6 +38,7 @@ spring:
           enabled: true
           initial-interval: 3s
           max-attempts: 3
+        concurrency: 3
 
   # AI Configuration
   ai:
@@ -59,6 +60,9 @@ spring:
 # /feed
 # /service/rich-rss
 outlets:
+  collector:
+    enabled: false
+    retry-enabled: false
   vg:
     name: VG
     feed-url: https://vg.no/rss/feed

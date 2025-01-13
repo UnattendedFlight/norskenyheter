@@ -1,13 +1,24 @@
 package no.newsagg.system.domain;
 
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.Type;
+import org.hibernate.type.SqlTypes;
 
 @Data
 @Entity
@@ -71,4 +82,9 @@ public class Article {
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private ArticleStatus status;
+
+
+  @Column(name = "categories", columnDefinition = "text[]")
+  @JdbcTypeCode(SqlTypes.ARRAY)
+  private List<String> categories;
 }

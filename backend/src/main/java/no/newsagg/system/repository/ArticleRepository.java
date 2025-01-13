@@ -69,15 +69,17 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
   List<Article> findAllByUrlIsIn(Collection<String> urls);
 
   @Query(value = """
-            SELECT * FROM articles 
-            WHERE status = :status 
-            AND id <> :excludeId
-            ORDER BY embedding <=> CAST(:queryVector AS vector(768))
-            LIMIT :limit
-            """, nativeQuery = true)
+      SELECT * FROM articles 
+      WHERE status = :status 
+      AND id <> :excludeId
+      ORDER BY embedding <=> CAST(:queryVector AS vector(768))
+      LIMIT :limit
+      """, nativeQuery = true)
   List<Article> findSimilarArticles(
       @Param("excludeId") Long excludeId,
       @Param("queryVector") float[] queryVector,
       @Param("status") String status,
       @Param("limit") int limit);
+
+  List<Article> findAllByStatus(ArticleStatus status);
 }

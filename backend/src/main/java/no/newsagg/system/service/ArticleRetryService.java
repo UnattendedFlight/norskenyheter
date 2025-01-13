@@ -26,10 +26,17 @@ public class ArticleRetryService {
   @Value("${app.processing.retry-attempts:3}")
   private static final int MAX_RETRIES = 3;
 
+  @Value("${outlets.collector.retry-enabled:true}")
+  private boolean retryEnabled;
+
   @Scheduled(fixedDelayString = "${app.retry-interval:300000}") // Default 5 minutes
   @Transactional
   public void retryFailedArticles() {
     log.debug("Starting retry process for failed articles");
+    if (!retryEnabled) {
+      log.info("Article retry is disabled");
+      return;
+    }
 
     // Find articles that are either NEW or FAILED
     List<Article> unprocessedArticles = articleRepository.findByStatusInAndRetryCountLessThan(

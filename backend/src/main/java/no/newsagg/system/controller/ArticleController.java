@@ -35,7 +35,8 @@ public class ArticleController {
   private final ArticleProcessor articleProcessor;
   private final ArticleService articleService;
 
-  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
   @GetMapping
   public Page<ArticleResponseDTO> getArticles(
       @RequestParam(required = false) String source,
@@ -49,8 +50,10 @@ public class ArticleController {
     if (source != null && status != null && since != null) {
       log.debug("Fetching articles by source, status and since: {}, {}, {}", source, status, since);
       articles = query != null && !query.isEmpty()
-          ? articleRepository.findBySourceAndStatusAndPublishedAtAfterSearch(source, status, since, pageable, query)
-          : articleRepository.findBySourceAndStatusAndPublishedAtAfter(source, status, since, pageable);
+          ? articleRepository.findBySourceAndStatusAndPublishedAtAfterSearch(source, status, since,
+          pageable, query)
+          : articleRepository.findBySourceAndStatusAndPublishedAtAfter(source, status, since,
+          pageable);
     } else if (source != null && status != null) {
       log.debug("Fetching articles by source and status: {}, {}", source, status);
       articles = query != null && !query.isEmpty()
@@ -75,20 +78,23 @@ public class ArticleController {
   }
 
 
-  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/stats")
   public ArticleStatsDTO getArticleStats() {
     return articleService.getArticleStats();
   }
 
-  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/{id}")
   public ArticleResponseDTO getArticle(@PathVariable Long id) {
     return ArticleResponseDTO.fromArticle(articleRepository.findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND)));
   }
 
-  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
   @PutMapping("/{id}/refetch")
   public ArticleResponseDTO refetchArticle(@PathVariable Long id) throws InterruptedException {
     Optional<Article> opt = articleRepository.findById(id);
@@ -106,10 +112,12 @@ public class ArticleController {
     return ArticleResponseDTO.fromArticle(article);
   }
 
-  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no", "http://api.auc.no", "https://api.auc.no"})
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
   @GetMapping("/{id}/similar")
   public List<ArticleResponseDTO> getSimilarArticles(@PathVariable Long id,
-                                          @PageableDefault(sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
+                                                     @PageableDefault(sort = "publishedAt", direction = Sort.Direction.DESC)
+                                                     Pageable pageable) {
     Optional<Article> opt = articleRepository.findById(id);
     if (opt.isEmpty()) {
       log.debug("Article not found: {}", id);
@@ -124,5 +132,16 @@ public class ArticleController {
             pageable.getPageSize()
         ).stream()
         .map(ArticleResponseDTO::fromArticle).toList();
+  }
+
+  @CrossOrigin(origins = {"http://localhost:3000", "http://auc.no", "https://auc.no",
+      "http://api.auc.no", "https://api.auc.no"})
+  @GetMapping("/updateCategories")
+  public String updateCategories() {
+    List<Article> articles = articleRepository.findAllByStatus(ArticleStatus.COMPLETED);
+    for (Article article : articles) {
+      articleProcessor.queueForCategoryProcessing(article);
+    }
+    return "Queued " + articles.size() + " articles for category processing";
   }
 }

@@ -20,6 +20,8 @@ public class RabbitMQConfig {
   public static final String ROUTING_KEY = "article.new";
   public static final String COLLECTOR_QUEUE_NAME = "newsagg.articles.collector";
   public static final String COLLECTOR_ROUTING_KEY = "article.collector";
+  public static final String CATEGORY_QUEUE_NAME = "newsagg.articles.category";
+  public static final String CATEGORY_ROUTING_KEY = "article.category";
 
   @Bean
   public TopicExchange articleExchange() {
@@ -64,5 +66,19 @@ public class RabbitMQConfig {
         .bind(collectorQueue)
         .to(articleExchange)
         .with(COLLECTOR_ROUTING_KEY);
+  }
+
+  @Bean
+  public Queue categoryQueue() {
+    return QueueBuilder.durable(CATEGORY_QUEUE_NAME)
+        .build();
+  }
+
+  @Bean
+  public Binding categoryBinding(Queue categoryQueue, TopicExchange articleExchange) {
+    return BindingBuilder
+        .bind(categoryQueue)
+        .to(articleExchange)
+        .with(CATEGORY_ROUTING_KEY);
   }
 }

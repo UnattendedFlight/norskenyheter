@@ -1,6 +1,7 @@
 package no.newsagg.system.service;
 
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,8 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import no.newsagg.system.domain.Article;
 import no.newsagg.system.domain.ArticleStatus;
 import no.newsagg.system.dto.ArticleStatsDTO;
+import no.newsagg.system.ollama.OllamaCategoryResponse;
 import no.newsagg.system.ollama.OllamaConfig;
-import no.newsagg.system.ollama.OllamaEmbeddingsResponse;
 import no.newsagg.system.ollama.OllamaResponse;
 import no.newsagg.system.repository.ArticleRepository;
 import org.springframework.ai.chat.model.ChatResponse;
@@ -23,8 +24,6 @@ import org.springframework.ai.embedding.EmbeddingRequest;
 import org.springframework.ai.embedding.EmbeddingResponse;
 import org.springframework.ai.ollama.OllamaChatModel;
 import org.springframework.ai.ollama.OllamaEmbeddingModel;
-import org.springframework.ai.ollama.api.OllamaApi;
-import org.springframework.ai.ollama.api.OllamaOptions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -107,6 +106,38 @@ public class ArticleService {
     }
   }
 
+  public void processArticleCategory(Long articleId) {
+    Optional<Article> articleOptional = articleRepository.findById(articleId);
+    if (articleOptional.isEmpty()) {
+      log.error("Article {} not found", articleId);
+      throw new RuntimeException("Article not found: " + articleId);
+    }
+
+    Article article = articleOptional.get();
+    log.info("Processing article category {}: {}", articleId, article.getSource());
+    if (article.getStatus() != ArticleStatus.COMPLETED) {
+      log.error("Article {} is not in COMPLETED state", articleId);
+      return;
+    }
+    try {
+      // Generate AI categories
+      log.debug("Generating AI categories for article {}", articleId);
+      OllamaCategoryResponse aiCategories =
+          generateAICategories(article.getContent(), article.getSummary());
+      List<String> categories = Arrays.stream(aiCategories.categories()).toList();
+      log.debug("Successfully generated AI categories for article {}", articleId);
+
+      // Update article
+      article.setCategories(categories);
+      articleRepository.save(article);
+      log.info("Successfully processed article categories: {}", article.getId());
+
+    } catch (Exception e) {
+      log.error("Failed to process article categories {}", articleId);
+      throw new RuntimeException("Failed to process article categories", e);
+    }
+  }
+
   private OllamaResponse generateAiContent(Article article, String articleContent) {
     String prompt = String.format("""
         VIKTIG: ALLE SVAR MÅ VÆRE PÅ NORSK (BOKMÅL)
@@ -176,11 +207,83 @@ public class ArticleService {
     }
   }
 
+  private OllamaCategoryResponse generateAICategories(String articleContent,
+                                                      String articleSummary) {
+    String prompt = String.format("""
+        VIKTIG: ALLE SVAR MÅ VÆRE PÅ NORSK (BOKMÅL)
+        DU SKAL ALDRI SVARE PÅ ENGELSK
+        
+        Du er en erfaren norsk nyhetsklassifiserer-AI som analyserer og kategoriserer nyhetsinnhold.
+        
+        KATEGORIKRAV:
+        - Returner en liste med minst én kategori fra følgende liste:
+          Nyheter > Innenriks
+          Nyheter > Utenriks
+          Nyheter > Politikk
+          Nyheter > Krim og Rettsvesen
+          Økonomi og Næringsliv > Børs og Finans
+          Økonomi og Næringsliv > Eiendom
+          Økonomi og Næringsliv > Arbeidsliv
+          Økonomi og Næringsliv > Forbruker
+          Teknologi og Vitenskap > Digital og IT
+          Teknologi og Vitenskap > Forskning
+          Teknologi og Vitenskap > Miljø og Klima
+          Teknologi og Vitenskap > Innovasjon
+          Kultur og Underholdning > Sport
+          Kultur og Underholdning > Film og TV
+          Kultur og Underholdning > Musikk
+          Kultur og Underholdning > Litteratur
+          Kultur og Underholdning > Kunst
+          Livsstil > Helse og Velvære
+          Livsstil > Mat og Drikke
+          Livsstil > Reise
+          Livsstil > Familie og Oppvekst
+          Meninger > Kommentar
+          Meninger > Debatt
+          Meninger > Leder
+        
+        - Kan tildele flere kategorier hvis innholdet er relevant for flere kategorier
+        - Kategoriene må reflektere hovedtemaene i innholdet
+        - Ved tvetydig innhold, velg den mest relevante kategorien
+        - Hvis kilden er på engelsk, analyser det oversatte innholdet
+        
+        INNDATA:
+        Artikkelsammendrag: %s
+        Artikkelinnhold: %s
+        
+        FORMATKRAV:
+        {format}
+        """, articleSummary, articleContent);
+    BeanOutputConverter<OllamaCategoryResponse> converter =
+        new BeanOutputConverter<>(OllamaCategoryResponse.class);
+
+    PromptTemplate promptTemplate =
+        new PromptTemplate(prompt, Map.of("format", converter.getFormat()));
+    Prompt aiPrompt = new Prompt(promptTemplate.createMessage());
+
+    OllamaChatModel ollamaClient = this.ollamaConfig.chatClient();
+
+    ChatResponse response = ollamaClient.call(aiPrompt);
+
+    try {
+      String content = response.getResult().getOutput().getContent().strip();
+      if (content.startsWith("{") && !content.endsWith("}")) {
+        content = content + "}";
+      }
+
+      return converter.convert(content);
+    } catch (Exception e) {
+      log.error("Failed to parse AI response: {}", response);
+      throw new RuntimeException("Failed to parse AI response", e);
+    }
+  }
+
   private EmbeddingResponse generateEmbeddings(String content) {
     try {
       OllamaEmbeddingModel embeddingsClient = this.ollamaConfig.embeddingsClient();
       return embeddingsClient.call(new EmbeddingRequest(List.of(content),
-          EmbeddingOptionsBuilder.builder().withModel("nomic-embed-text").withDimensions(1536).build()));
+          EmbeddingOptionsBuilder.builder().withModel("nomic-embed-text").withDimensions(1536)
+              .build()));
     } catch (Exception e) {
       log.error("Failed to parse embeddings response", e);
       throw new RuntimeException("Failed to parse embeddings response", e);

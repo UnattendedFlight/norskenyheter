@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import no.newsagg.system.messaging.RabbitMQConfig;
 import no.newsagg.system.outlet.common.RssNewsOutlet;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +17,17 @@ public class ArticleFetcherService {
   private final List<RssNewsOutlet> newsOutlets;
   private final RabbitTemplate rabbitTemplate;
 
+  @Value("${outlets.collector.enabled:true}")
+  private boolean collectorEnabled;
+
   @Scheduled(fixedDelayString = "${app.fetch-interval:600000}")  // Default 10 minutes
 //  @Transactional
   public void fetchArticles() {
+
+    if (!collectorEnabled) {
+      log.info("Article collector is disabled");
+      return;
+    }
     for (int i = 0; i < newsOutlets.size(); i++) {
 //      articleCollector.collectArticles(i);
       rabbitTemplate.convertAndSend(
