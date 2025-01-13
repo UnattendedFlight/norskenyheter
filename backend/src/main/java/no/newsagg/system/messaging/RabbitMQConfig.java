@@ -18,6 +18,8 @@ public class RabbitMQConfig {
   public static final String EXCHANGE_NAME = "newsagg.articles";
   public static final String QUEUE_NAME = "newsagg.articles.process";
   public static final String ROUTING_KEY = "article.new";
+  public static final String COLLECTOR_QUEUE_NAME = "newsagg.articles.collector";
+  public static final String COLLECTOR_ROUTING_KEY = "article.collector";
 
   @Bean
   public TopicExchange articleExchange() {
@@ -48,5 +50,19 @@ public class RabbitMQConfig {
     final RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
     rabbitTemplate.setMessageConverter(jsonMessageConverter());
     return rabbitTemplate;
+  }
+
+  @Bean
+  public Queue collectorQueue() {
+    return QueueBuilder.durable(COLLECTOR_QUEUE_NAME)
+        .build();
+  }
+
+  @Bean
+  public Binding collectorBinding(Queue collectorQueue, TopicExchange articleExchange) {
+    return BindingBuilder
+        .bind(collectorQueue)
+        .to(articleExchange)
+        .with(COLLECTOR_ROUTING_KEY);
   }
 }

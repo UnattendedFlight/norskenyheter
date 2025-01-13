@@ -10,7 +10,7 @@ spring:
 
   # Database Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5433/newsagg
+    url: jdbc:postgresql://172.25.0.4:5433/newsagg
     username: newsagg
     password: newsagg
 
@@ -27,8 +27,8 @@ spring:
 
   # RabbitMQ Configuration
   rabbitmq:
-    host: localhost
-    port: 5672
+    host: 172.25.0.4
+    port: 5674
     username: newsagg
     password: newsagg
     virtual-host: /newsagg
@@ -38,10 +38,6 @@ spring:
           enabled: true
           initial-interval: 3s
           max-attempts: 3
-  #  task:
-  #    scheduling:
-  #      pool:
-  #        size: 2
 
   # AI Configuration
   ai:
@@ -53,6 +49,10 @@ spring:
         model: nomic-embed-text
         options:
           num-ctx: 8192
+#  task:
+#    scheduling:
+#      pool:
+#        size: 4
 
 # RSS Feed Configuration
 # /rss
